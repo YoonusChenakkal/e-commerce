@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/utils/utils.dart';
 import 'package:e_commerce/view_model/auth_provider.dart';
@@ -48,11 +46,10 @@ class RegisterPage extends StatelessWidget {
                   text: 'Submit',
                   onPressed: () async {
                     final data = {'email': email, 'otp': tcOtp.text};
-                    if (data.isEmpty) {
+                    if (tcOtp.text.isEmpty) {
                       return Utils.flushBar('Enter Otp', context);
                     } else {
                       await authProvider.verifyOtp(data, context);
-                      Navigator.pop(context);
                     }
                   }),
             ],

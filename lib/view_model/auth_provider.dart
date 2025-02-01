@@ -81,14 +81,12 @@ class AuthProvider extends ChangeNotifier {
       if (kDebugMode) {
         print('Verify OTP Value: $response');
       }
-
-      Utils.flushBar(response['message'], context, color: Colors.blue);
+      await Utils.flushBar(response['message'], context, color: Colors.blue);
       Navigator.pushReplacementNamed(context, RouteName.login);
     } catch (error) {
       if (kDebugMode) {
         print('verifyOtp Error: $error');
       }
-
       Utils.flushBar(error.toString(), context);
     } finally {
       isLoading = false;

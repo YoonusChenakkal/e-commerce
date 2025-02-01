@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/view_model/profile_provider.dart';
 import 'package:e_commerce/view_model/store_provider.dart';

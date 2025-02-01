@@ -3,7 +3,7 @@ import 'package:e_commerce/utils/app_style.dart';
 import 'package:flutter/material.dart';
 
 class Utils {
-  static void flushBar(String message, BuildContext context,
+  static flushBar(String message, BuildContext context,
       {Color color = Colors.red}) {
     Flushbar(
       message: message,
