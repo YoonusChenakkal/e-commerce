@@ -1,5 +1,5 @@
 import 'package:e_commerce/models/product_model.dart';
-import 'package:e_commerce/view/widgets/add_to_cart%20_sheet.dart';
+import 'package:e_commerce/view/ReUsable/add_to_cart%20_sheet.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetailPage extends StatelessWidget {
@@ -65,7 +65,7 @@ class ProductDetailPage extends StatelessWidget {
                           ),
                         const SizedBox(height: 16),
                         Text(
-                          'description',
+                          product.description,
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ],

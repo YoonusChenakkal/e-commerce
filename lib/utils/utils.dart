@@ -1,4 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:e_commerce/utils/app_style.dart';
 import 'package:flutter/material.dart';
 
 class Utils {
@@ -26,8 +27,32 @@ class Utils {
     required VoidCallback onPressed,
     required String text,
     required bool isLoading,
+    Color color = Colors.white,
   }) =>
       ElevatedButton(
           onPressed: onPressed,
+          style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll<Color>(color)),
           child: isLoading ? CircularProgressIndicator() : Text(text));
+
+  static tableRow({required String label, required String? value}) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(
+            '$label : ',
+            style: headline3,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(
+            value ?? 'Not set',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ),
+      ],
+    );
+  }
 }

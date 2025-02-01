@@ -1,0 +1,52 @@
+// views/home/widgets/subCategory_chip.dart
+import 'package:e_commerce/models/category_model.dart';
+import 'package:flutter/material.dart';
+
+class SubCatrgoryChip extends StatelessWidget {
+  final SubCategory subCategory;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const SubCatrgoryChip({
+    super.key,
+    required this.subCategory,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? Colors.blue : Colors.transparent,
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            if (subCategory.subCategoryImage.isNotEmpty)
+              CircleAvatar(
+                radius: 15,
+                backgroundImage: NetworkImage(subCategory.subCategoryImage),
+              ),
+            const SizedBox(width: 8),
+            Text(
+              subCategory.name,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.blue : Colors.grey.shade800,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

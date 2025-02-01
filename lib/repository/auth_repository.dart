@@ -1,4 +1,3 @@
-import 'package:e_commerce/models/user_model.dart';
 import 'package:e_commerce/services/app_urls.dart';
 import 'package:e_commerce/services/base_api_services.dart';
 import 'package:e_commerce/services/network_services.dart';
@@ -24,22 +23,20 @@ class AuthRepository {
       return response;
     } catch (e) {
       if (kDebugMode) {
+        print(registerUrl);
         print('user Register : $e');
       }
     }
   }
 
-  Future<UserModel> fetchUser(userId) async {
-    userId = 39;
+  verifyOtp(body) {
     try {
-      final response = await _apiServices.getApi('$fetchUserUrl$userId/');
-
-      return UserModel.fromJson(response); 
+      final response = _apiServices.postApi(verifyOtpUrl, body);
+      return response;
     } catch (e) {
       if (kDebugMode) {
-        print('fetchUser Error: $e');
+        print('verify Otp : $e');
       }
-      rethrow;
     }
   }
 }

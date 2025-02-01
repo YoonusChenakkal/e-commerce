@@ -1,12 +1,8 @@
-import 'package:e_commerce/models/category_model.dart';
 import 'package:e_commerce/routes/routes_name.dart';
-import 'package:e_commerce/view/widgets/product_card.dart';
-import 'package:e_commerce/view/widgets/category_chip.dart';
-import 'package:e_commerce/view/product_details_page.dart';
+import 'package:e_commerce/view/ReUsable/product_card.dart';
 import 'package:e_commerce/view_model/cart_provider.dart';
 import 'package:e_commerce/view_model/store_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +16,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Fresh Grocery'),
         actions: [
           IconButton(
@@ -40,7 +37,6 @@ class HomePage extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             _buildPromoBanner(storeProvider),
-            _buildCategorySection(),
             _buildProductSection(),
           ],
         ),
@@ -77,39 +73,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  SliverToBoxAdapter _buildCategorySection() {
-    return SliverToBoxAdapter(
-      child: Consumer<StoreProvider>(
-        builder: (context, provider, _) => SizedBox(
-          height: 65,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              CategoryChip(
-                category: Category(
-                  id: -1,
-                  name: "All",
-                  imageUrl: "",
-                  enableCategory: true,
-                ),
-                isSelected: provider.selectedCategoryId == null,
-                onTap: () => provider.selectCategory(null),
-              ),
-              ...provider.categories.map(
-                (category) => CategoryChip(
-                  category: category,
-                  isSelected: category.id == provider.selectedCategoryId,
-                  onTap: () => provider.selectCategory(category.id),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   SliverPadding _buildProductSection() {
     return SliverPadding(
       padding: const EdgeInsets.all(16),
@@ -120,7 +83,7 @@ class HomePage extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator()));
           }
 
-          return provider.filteredProducts.isEmpty
+          return provider.products.isEmpty
               ? SliverFillRemaining(
                   child: Center(
                     child: Text(
@@ -138,17 +101,14 @@ class HomePage extends StatelessWidget {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => ProductCard(
-                      product: provider.filteredProducts[index],
-                      onTap: () => Navigator.push(
+                      product: provider.products[index],
+                      onTap: () => Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => ProductDetailPage(
-                            product: provider.filteredProducts[index],
-                          ),
-                        ),
+                        RouteName.productDetails,
+                        arguments: provider.products[index],
                       ),
                     ),
-                    childCount: provider.filteredProducts.length,
+                    childCount: provider.products.length,
                   ),
                 );
         },

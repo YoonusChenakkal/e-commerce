@@ -1,10 +1,14 @@
+import 'package:e_commerce/models/category_model.dart';
+import 'package:e_commerce/models/product_model.dart';
 import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/view/bottom_bar.dart';
 import 'package:e_commerce/view/cart_page.dart';
 import 'package:e_commerce/view/categories_page.dart';
 import 'package:e_commerce/view/home_page.dart';
 import 'package:e_commerce/view/login_page.dart';
-import 'package:e_commerce/view/profile_page.dart';
+import 'package:e_commerce/view/Profile/profile_page.dart';
+import 'package:e_commerce/view/product_details_page.dart';
+import 'package:e_commerce/view/products_page.dart';
 import 'package:e_commerce/view/register_page.dart';
 import 'package:e_commerce/view/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +34,24 @@ class Routes {
         return MaterialPageRoute(builder: (context) => CategoriesPage());
       case RouteName.profile:
         return MaterialPageRoute(builder: (context) => ProfilePage());
+
+      case RouteName.productDetails:
+        final args = settings.arguments;
+        return MaterialPageRoute(
+            builder: (context) => ProductDetailPage(
+                  product: args as Product,
+                ));
+
+      case RouteName.products:
+        final args = settings.arguments as Map<String, dynamic>;
+        final category = args['category'] as Category;
+        final subCategories = args['subCategories'] as List<SubCategory>;
+        return MaterialPageRoute(
+            builder: (context) => ProductsPage(
+                  category: category,
+                  subCategories: subCategories,
+                ));
+
       default:
         return MaterialPageRoute(
           builder: (context) => Scaffold(

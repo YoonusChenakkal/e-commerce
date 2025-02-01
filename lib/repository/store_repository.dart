@@ -34,6 +34,16 @@ class StoreRepository {
     }
   }
 
+  Future<List<Product>> fetchTotalProducts() async {
+    try {
+      final response = await _apiServices.getApi(totalProductsUrl);
+      return (response as List).map((json) => Product.fromJson(json)).toList();
+    } catch (e) {
+      print('fetch total Products error: $e');
+      rethrow;
+    }
+  }
+
   Future<List<SubCategory>> fetchSubCategories() async {
     try {
       final response = await _apiServices.getApi(subCategoriesUrl);

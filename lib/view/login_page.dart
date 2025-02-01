@@ -1,3 +1,4 @@
+import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/utils/utils.dart';
 import 'package:e_commerce/view_model/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,21 @@ class LoginPage extends StatelessWidget {
                 authProvider.userLogin(data, context);
               },
               text: 'Login',
-              isLoading: authProvider.isLoading)
+              isLoading: authProvider.isLoading),
+          SizedBox(
+            height: 30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Don\'t have an account?'),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, RouteName.register);
+                  },
+                  child: Text('Register'))
+            ],
+          )
         ],
       ),
     );

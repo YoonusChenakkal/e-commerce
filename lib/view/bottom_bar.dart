@@ -1,6 +1,6 @@
 import 'package:e_commerce/View/home_page.dart';
 import 'package:e_commerce/view/categories_page.dart';
-import 'package:e_commerce/view/profile_page.dart';
+import 'package:e_commerce/view/Profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class BottomBar extends StatefulWidget {

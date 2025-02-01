@@ -1,28 +1,17 @@
+import 'package:e_commerce/routes/routes_name.dart';
+import 'package:e_commerce/view/ReUsable/custom_expansion_tile.dart';
 import 'package:e_commerce/view_model/store_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CategoriesPage extends StatefulWidget {
+class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});
-
-  @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
-}
-
-class _CategoriesPageState extends State<CategoriesPage> {
-  @override
-  void initState() {
-    super.initState();
-    // Fetch data when the page initializes
-    final storeProvider = Provider.of<StoreProvider>(context, listen: false);
-    storeProvider.fetchCategories(context);
-    storeProvider.fetchSubCategories(context);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Categories'),
       ),
       body: Consumer<StoreProvider>(
@@ -40,38 +29,53 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   .where((sub) => sub.category == category.id)
                   .toList();
 
-              return Card(
-                margin: const EdgeInsets.only(bottom: 16),
-                child: ExpansionTile(
-                  leading: Image.network(
-                    category.imageUrl,
-                    width: 40,
-                    height: 40,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.category),
-                  ),
-                  title: Text(category.name),
-                  children: [
-                    if (subCategories.isEmpty)
-                      const ListTile(
-                        title: Text('No subcategories available'),
-                      )
-                    else
-                      ...subCategories.map((subCategory) => ListTile(
-                            leading: Image.network(
-                              subCategory.subCategoryImage,
-                              width: 40,
-                              height: 40,
-                              errorBuilder: (_, __, ___) =>
-                                  const Icon(Icons.subtitles),
-                            ),
-                            title: Text(subCategory.name),
-                            subtitle: Text(subCategory.categoryName),
-                            onTap: () {
-                              // Handle subcategory tap
-                            },
-                          )),
-                  ],
+              return CustomExpansionTile(
+                onExpansionChanged: (expanded) {
+                  if (subCategories.isEmpty) {
+                    storeProvider.selectCategory(category.id);
+                    storeProvider.selectSubCategory(null);
+                    Navigator.pushNamed(context, RouteName.products,
+                        arguments: {
+                          'category': category,
+                          'subCategories': subCategories,
+                        });
+                  }
+                },
+                leading: Image.network(
+                  category.imageUrl,
+                  width: 40,
+                  height: 40,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.category),
                 ),
+                title: category.name,
+                isExpandable: subCategories.isNotEmpty,
+                children: subCategories
+                    .map(
+                      (subCategory) => ListTile(
+                        leading: Image.network(
+                          subCategory.subCategoryImage,
+                          width: 40,
+                          height: 40,
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.subtitles),
+                        ),
+                        title: Text(subCategory.name),
+                        subtitle: Text(subCategory.categoryName),
+                        onTap: () {
+                          // Update provider state
+                          storeProvider.selectCategory(category.id);
+                          storeProvider.selectSubCategory(subCategory.id);
+
+                          // Navigate to ProductsPage
+                          Navigator.pushNamed(context, RouteName.products,
+                              arguments: {
+                                'category': category,
+                                'subCategories': subCategories,
+                              });
+                        },
+                      ),
+                    )
+                    .toList(),
               );
             },
           );

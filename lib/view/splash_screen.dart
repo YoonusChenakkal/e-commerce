@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/view_model/profile_provider.dart';
 import 'package:e_commerce/view_model/store_provider.dart';
@@ -15,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeApp();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initializeApp());
   }
 
   void _initializeApp() async {
@@ -24,16 +26,23 @@ class _SplashScreenState extends State<SplashScreen> {
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
 
-    await profileProvider.fetchUser(context);
-    await storeProvider.fetchCategories(context);
-    await storeProvider.fetchCategories(context);
-    await storeProvider.fetchProducts(context);
+    storeProvider.fetchProducts(context);
+    storeProvider.fetchTotalProducts(context);
     storeProvider.fetchPosters(context);
     storeProvider.fetchCarousel(context);
+    storeProvider.fetchCategories(context);
+    storeProvider.fetchSubCategories(context);
 
     // Navigate to Home Screen after 2 seconds
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, RouteName.bottomBar);
+    Future.delayed(Duration(seconds: 2), () async {
+      if (profileProvider.user != null) {
+        await profileProvider.fetchUser(context);
+
+        Navigator.pushReplacementNamed(context, RouteName.bottomBar);
+        return;
+      } else {
+        Navigator.pushReplacementNamed(context, RouteName.login);
+      }
     });
   }
 
@@ -45,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/iconbg.png', width: 150), // Your logo
+            Image.asset('assets/logo.png', width: 150), // Your logo
             SizedBox(height: 20),
             CircularProgressIndicator(), // Loading animation
           ],
