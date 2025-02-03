@@ -1,4 +1,4 @@
-import 'package:e_commerce/models/cart_items.dart';
+import 'package:e_commerce/models/cart_item.dart';
 import 'package:e_commerce/view_model/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +8,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Cart'),
@@ -15,14 +16,15 @@ class CartPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              context.read<CartProvider>().clearCart();
+              // context.read<CartProvider>().clearCart();
+              cartProvider.fetchCart();
             },
           ),
         ],
       ),
       body: Consumer<CartProvider>(
         builder: (context, cart, _) {
-          if (cart.items.isEmpty) {
+          if (cart.cartItems.isEmpty) {
             return const Center(
               child: Text('Your cart is empty.'),
             );
@@ -32,9 +34,9 @@ class CartPage extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: cart.items.length,
+                  itemCount: cart.cartItems.length,
                   itemBuilder: (context, index) {
-                    final item = cart.items[index];
+                    final item = cart.cartItems[index];
                     return _buildCartItem(context, item);
                   },
                 ),
@@ -47,24 +49,27 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCartItem(BuildContext context, CartItem item) {
+  Widget _buildCartItem(BuildContext context, CartItem cartItem) {
+    final baseUrl = 'https://groceryct.pythonanywhere.com';
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: Image.network(
-          item.product.imageUrl,
+          baseUrl + cartItem.product.imageUrl,
           width: 50,
           height: 50,
           fit: BoxFit.cover,
         ),
-        title: Text(item.product.name),
+        title: Text(cartItem.product.name),
         subtitle: Text(
-          '₹${item.product.offerPrice} x ${item.quantity}',
+          cartItem.product.weightMeasurement.toLowerCase() != 'kg'
+              ? '₹${cartItem.price} x ${cartItem.quantity}'
+              : '${cartItem.selectedWeight} x ${cartItem.quantity}= ${cartItem.price}',
         ),
         trailing: IconButton(
           icon: const Icon(Icons.remove_circle_outline),
           onPressed: () {
-            context.read<CartProvider>().removeFromCart(item.product.id);
+            // context.read<CartProvider>().removeFromCart( cartItem.product.id);
           },
         ),
       ),
@@ -92,7 +97,7 @@ class CartPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           Text(
-            '₹${cart.totalPrice.toStringAsFixed(2)}',
+            '₹ ${cart.totalPrice}',
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

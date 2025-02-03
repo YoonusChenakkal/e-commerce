@@ -35,7 +35,11 @@ class LoginPage extends StatelessWidget {
                   'email': tcEmail.text,
                   'password': tcPassword.text
                 };
-                authProvider.userLogin(data, context);
+                if (tcEmail.text.isEmpty || tcPassword.text.isEmpty) {
+                  Utils.flushBar('Please fill all fields', context);
+                } else {
+                  authProvider.userLogin(data, context);
+                }
               },
               text: 'Login',
               isLoading: authProvider.isLoading),

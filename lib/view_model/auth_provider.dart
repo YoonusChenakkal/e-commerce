@@ -2,6 +2,7 @@ import 'package:e_commerce/repository/auth_repository.dart';
 import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/services/local_storage.dart';
 import 'package:e_commerce/utils/utils.dart';
+import 'package:e_commerce/view_model/cart_provider.dart';
 import 'package:e_commerce/view_model/profile_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,10 @@ class AuthProvider extends ChangeNotifier {
       await LocalStorage.saveUser(value['user_id']);
 
       // Fetch User Data
-      await Provider.of<ProfileProvider>(context, listen: false)
-          .fetchUser(context);
+      await Provider.of<ProfileProvider>(context, listen: false).fetchUser(
+        context,
+      );
+      Provider.of<CartProvider>(context, listen: false).fetchCart();
 
       Utils.flushBar('Logged In Successfully', context, color: Colors.blue);
       Navigator.pushReplacementNamed(context, RouteName.bottomBar);
@@ -81,7 +84,9 @@ class AuthProvider extends ChangeNotifier {
       if (kDebugMode) {
         print('Verify OTP Value: $response');
       }
-      await Utils.flushBar(response['message'], context, color: Colors.blue);
+      Utils.flushBar('User Registered,Login Now', context, color: Colors.blue);
+
+      await Future.delayed(Duration(seconds: 3));
       Navigator.pushReplacementNamed(context, RouteName.login);
     } catch (error) {
       if (kDebugMode) {

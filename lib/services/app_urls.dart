@@ -9,3 +9,7 @@ const productsUrl = '${baseUrl}products/';
 const totalProductsUrl = '${baseUrl}total/products/';
 const posterImageUrl = '${baseUrl}poster-image/';
 const carouselImageUrl = '${baseUrl}carousel/';
+const viewCart = '${baseUrl}view-cart/';
+const addToCartUrl = '${baseUrl}add-to-cart/';
+const updateCartUrl = '${baseUrl}cart/update/';
+const removeFromCartUrl = '${baseUrl}cart/remove/';

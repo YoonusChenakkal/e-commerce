@@ -68,10 +68,10 @@ class ProductCard extends StatelessWidget {
                         ],
                       ),
                       IconButton(
-                        icon: const Icon(Icons.add_shopping_cart),
-                        onPressed: () =>
-                            context.read<CartProvider>().addToCart(product),
-                      ),
+                          icon: const Icon(Icons.add_shopping_cart),
+                          onPressed: () =>
+                              // context.read<CartProvider>().addToCart(product),
+                              ''),
                     ],
                   ),
                 ],

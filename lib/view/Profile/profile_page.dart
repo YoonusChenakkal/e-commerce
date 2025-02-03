@@ -43,7 +43,7 @@ class ProfilePage extends StatelessWidget {
         _buildButtonCard(
             text: 'Cart',
             icon: Icons.shopping_cart_outlined,
-            onpressed: () => Navigator.pushNamed(context, RouteName.login))
+            onpressed: () => Navigator.pushNamed(context, RouteName.cart)),
       ],
     );
   }

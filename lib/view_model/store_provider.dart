@@ -65,12 +65,11 @@ class StoreProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       categories = await _storeRepository.fetchCategories();
-      isLoading = false;
-      notifyListeners();
     } catch (e) {
+      Utils.flushBar('Failed to load categories: $e', context);
+    } finally {
       isLoading = false;
       notifyListeners();
-      Utils.flushBar('Failed to load categories: $e', context);
     }
   }
 
@@ -80,12 +79,11 @@ class StoreProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       subCategories = await _storeRepository.fetchSubCategories();
-      isLoading = false;
-      notifyListeners();
     } catch (e) {
+      Utils.flushBar('Failed to fetch sub-categories: $e', context);
+    } finally {
       isLoading = false;
       notifyListeners();
-      Utils.flushBar('Failed to fetch sub-categories: $e', context);
     }
   }
 
@@ -95,12 +93,11 @@ class StoreProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       products = await _storeRepository.fetchProducts();
-      isLoading = false;
-      notifyListeners();
     } catch (e) {
+      Utils.flushBar('Failed to load products: $e', context);
+    } finally {
       isLoading = false;
       notifyListeners();
-      Utils.flushBar('Failed to load products: $e', context);
     }
   }
 
@@ -110,12 +107,12 @@ class StoreProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       totalProducts = await _storeRepository.fetchTotalProducts();
-      isLoading = false;
-      notifyListeners();
     } catch (e) {
       isLoading = false;
-      notifyListeners();
       Utils.flushBar('Failed to load total products: $e', context);
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -125,12 +122,12 @@ class StoreProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       posters = await _storeRepository.fetchPoster();
-      isLoading = false;
       notifyListeners();
     } catch (e) {
+      Utils.flushBar('Failed to load posters: $e', context);
+    } finally {
       isLoading = false;
       notifyListeners();
-      Utils.flushBar('Failed to load posters: $e', context);
     }
   }
 
@@ -140,12 +137,12 @@ class StoreProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       carousel = await _storeRepository.fetchCarousel();
-      isLoading = false;
       notifyListeners();
     } catch (e) {
+      Utils.flushBar('Failed to fetch carousel: $e', context);
+    } finally {
       isLoading = false;
       notifyListeners();
-      Utils.flushBar('Failed to fetch carousel: $e', context);
     }
   }
 }

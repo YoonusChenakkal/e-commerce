@@ -34,8 +34,37 @@ class NetworkServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future putApi(String url, body) async {
+    dynamic responseJson;
+
+    try {
+      final response = await http
+          .put(Uri.parse(url), body: body)
+          .timeout(const Duration(seconds: 15));
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet Connection');
+    }
+    return responseJson;
+  }
+
+  Future deleteApi(String url) async {
+    dynamic responseJson;
+
+    try {
+      final response = await http
+          .delete(Uri.parse(url))
+          .timeout(const Duration(seconds: 15));
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet Connection');
+    }
+    return responseJson;
+  }
+
   dynamic returnResponse(http.Response response) {
     final responseBody = jsonDecode(response.body);
+    print(responseBody);
     switch (response.statusCode) {
       case 200:
       case 201:

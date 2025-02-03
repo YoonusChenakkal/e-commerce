@@ -1,4 +1,5 @@
 import 'package:e_commerce/routes/routes_name.dart';
+import 'package:e_commerce/view_model/cart_provider.dart';
 import 'package:e_commerce/view_model/profile_provider.dart';
 import 'package:e_commerce/view_model/store_provider.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final storeProvider = Provider.of<StoreProvider>(context, listen: false);
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     storeProvider.fetchProducts(context);
     storeProvider.fetchTotalProducts(context);
@@ -35,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 2), () async {
       if (profileProvider.user != null) {
         await profileProvider.fetchUser(context);
-
+        cartProvider.fetchCart();
         Navigator.pushReplacementNamed(context, RouteName.bottomBar);
         return;
       } else {

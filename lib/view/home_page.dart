@@ -21,8 +21,8 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Badge(
-              isLabelVisible: cartProvider.items.isNotEmpty,
-              label: Text('${cartProvider.items.length}'),
+              isLabelVisible: cartProvider.cartItems.isNotEmpty,
+              label: Text('${cartProvider.cartItems.length}'),
               child: const Icon(Icons.shopping_cart),
             ),
             onPressed: () => Navigator.pushNamed(context, RouteName.cart),

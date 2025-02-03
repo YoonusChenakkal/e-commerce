@@ -1,5 +1,5 @@
 import 'package:e_commerce/models/product_model.dart';
-import 'package:e_commerce/view/ReUsable/add_to_cart%20_sheet.dart';
+import 'package:e_commerce/view/ReUsable/add_to_cart_sheet.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetailPage extends StatelessWidget {
@@ -9,15 +9,22 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double originalPrice = product.price;
+    final double savings = originalPrice - product.offerPrice;
+    final bool hasDiscount = product.offerPrice < originalPrice;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: const Icon(Icons.share, color: Colors.black),
             onPressed: () {},
           ),
         ],
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
@@ -26,6 +33,7 @@ class ProductDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Product Image Carousel
                   SizedBox(
                     height: 300,
                     child: PageView.builder(
@@ -36,37 +44,92 @@ class ProductDetailPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Product Details
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Product Name
                         Text(
                           product.name,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '₹${product.offerPrice}',
                           style: const TextStyle(
                             fontSize: 24,
-                            color: Colors.green,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (product.offerPrice < product.price)
-                          Text(
-                            '₹${product.price}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade500,
-                              decoration: TextDecoration.lineThrough,
+                        const SizedBox(height: 8),
+                        // Price Section
+                        Row(
+                          children: [
+                            Text(
+                              '₹${product.offerPrice}',
+                              style: const TextStyle(
+                                fontSize: 28,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '/ ${product.weightMeasurement}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Savings and Discount
+                        if (hasDiscount) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Text(
+                                '₹${product.price}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade500,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'Save ₹${savings.toStringAsFixed(2)} (${product.discount}% off)',
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
+                        ],
                         const SizedBox(height: 16),
+                        // Product Description
+                        Text(
+                          'Description',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         Text(
                           product.description,
-                          style: TextStyle(color: Colors.grey.shade600),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey.shade600,
+                          ),
                         ),
                       ],
                     ),
@@ -75,6 +138,7 @@ class ProductDetailPage extends StatelessWidget {
               ),
             ),
           ),
+          // Add to Cart Bar
           _buildAddToCartBar(context),
         ],
       ),
@@ -83,7 +147,7 @@ class ProductDetailPage extends StatelessWidget {
 
   Widget _buildAddToCartBar(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -97,10 +161,23 @@ class ProductDetailPage extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.shopping_cart),
-              label: const Text('ADD TO CART'),
+            child: ElevatedButton(
               onPressed: () => _showAddToCartDialog(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'ADD TO CART',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
         ],
@@ -111,6 +188,7 @@ class ProductDetailPage extends StatelessWidget {
   void _showAddToCartDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (_) => AddToCartSheet(product: product),
     );
   }

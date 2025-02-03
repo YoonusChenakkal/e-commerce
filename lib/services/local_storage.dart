@@ -10,7 +10,7 @@ class LocalStorage {
   }
 
   /// Get user
-  static Future<int?> getUser() async {
+  static Future<int?> getUser(String s) async {
     final prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt(_userId);
     if (userId == null) return null;
