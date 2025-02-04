@@ -9,4 +9,5 @@ class RouteName {
   static const String profile = '/profile';
   static const String products = '/products';
   static const String productDetails = '/productDetails';
+  static const String checkout = '/checkout';
 }

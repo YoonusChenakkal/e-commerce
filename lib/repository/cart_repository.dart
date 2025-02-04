@@ -1,17 +1,14 @@
-import 'package:e_commerce/models/cart_item.dart';
 import 'package:e_commerce/services/app_urls.dart';
 import 'package:e_commerce/services/base_api_services.dart';
 import 'package:e_commerce/services/local_storage.dart';
 import 'package:e_commerce/services/network_services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
 
 class CartRepository {
   final BaseApiServices _apiServices = NetworkServices();
 
-  Future fetchCart() async {
+  Future fetchCart(userId) async {
     // Fetch cart
-    final userId = await LocalStorage.getUser('user_id');
 
     try {
       final response = await _apiServices.getApi('$viewCart$userId/');
@@ -23,9 +20,8 @@ class CartRepository {
     }
   }
 
-  Future addToCart(body, int productId) async {
+  Future addToCart(body, int productId, userId) async {
     // Add product to cart
-    final userId = await LocalStorage.getUser('user_id');
     try {
       final response =
           _apiServices.postApi('$addToCartUrl$userId/$productId/', body);
@@ -42,7 +38,7 @@ class CartRepository {
     // Update product in cart
     try {
       final response =
-          _apiServices.putApi('$updateCartUrl$userId/$productId/', body);
+          _apiServices.patchApi('$updateCartUrl$userId/$productId/', body);
       return response;
     } catch (e) {
       if (kDebugMode) {
@@ -55,7 +51,7 @@ class CartRepository {
     // Remove product from cart
     try {
       final response =
-          _apiServices.deleteApi('${removeFromCartUrl + userId}/$cartId/');
+          _apiServices.deleteApi('$removeFromCartUrl$userId/$cartId/');
       return response;
     } catch (e) {
       if (kDebugMode) {

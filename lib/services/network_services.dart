@@ -34,12 +34,12 @@ class NetworkServices extends BaseApiServices {
     return responseJson;
   }
 
-  Future putApi(String url, body) async {
+  Future patchApi(String url, body) async {
     dynamic responseJson;
 
     try {
       final response = await http
-          .put(Uri.parse(url), body: body)
+          .patch(Uri.parse(url), body: body)
           .timeout(const Duration(seconds: 15));
       responseJson = returnResponse(response);
     } on SocketException {
@@ -48,6 +48,8 @@ class NetworkServices extends BaseApiServices {
     return responseJson;
   }
 
+
+  @override
   Future deleteApi(String url) async {
     dynamic responseJson;
 
@@ -68,6 +70,7 @@ class NetworkServices extends BaseApiServices {
     switch (response.statusCode) {
       case 200:
       case 201:
+      case 204:
         return responseBody;
 
       case 400:

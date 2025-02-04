@@ -6,8 +6,9 @@ import 'package:provider/provider.dart';
 
 class AddToCartSheet extends StatefulWidget {
   final Product product;
+  final bool isCart;
 
-  const AddToCartSheet({super.key, required this.product});
+  const AddToCartSheet({super.key, required this.product, this.isCart = false});
 
   @override
   State<AddToCartSheet> createState() => _AddToCartSheetState();
@@ -60,7 +61,12 @@ class _AddToCartSheetState extends State<AddToCartSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Add to Cart',
+            widget.isCart
+                ? widget.product.weightMeasurement.toLowerCase() == 'kg' ||
+                        widget.product.weightMeasurement.toLowerCase() == 'g'
+                    ? 'Change Weight'
+                    : 'Change Quantity'
+                : 'Add to Cart',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
@@ -70,28 +76,53 @@ class _AddToCartSheetState extends State<AddToCartSheet> {
               : quantitySection(),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: widget.product.weightMeasurement.toLowerCase() == 'kg' ||
-                    widget.product.weightMeasurement.toLowerCase() == 'g'
-                ? () {
-                    final price = calculatePrice(weight, widget.product);
-                    final data = {
-                      'weight': weight,
-                      'price': price.toString(),
-                    };
-                    print(data);
-                    cartProvider.addToCart(data, widget.product.id, context);
-                  }
-                : () {
-                    final price = calculatePrice(weight, widget.product);
-                    final data = {
-                      'quantity': quantity.toString(),
-                      'weight': weight,
-                      'price': price.toString(),
-                    };
-                    print(data);
-                    cartProvider.addToCart(data, widget.product.id, context);
-                  },
-            child: const Text('Add to Cart'),
+            onPressed: widget.isCart
+                ? widget.product.weightMeasurement.toLowerCase() == 'kg' ||
+                        widget.product.weightMeasurement.toLowerCase() == 'g'
+                    ? () {
+                        final price = calculatePrice(weight, widget.product);
+                        final data = {
+                          'weight': weight,
+                          'price': price.toString(),
+                        };
+
+                        cartProvider.updateCart(
+                            data, widget.product.id, context);
+                      }
+                    : () {
+                        final price = widget.product.offerPrice * quantity;
+                        final data = {
+                          'quantity': quantity.toString(),
+                          'weight': widget.product.weights[0].weight,
+                          'price': price.toString(),
+                        };
+                        cartProvider.updateCart(
+                            data, widget.product.id, context);
+                      }
+                : widget.product.weightMeasurement.toLowerCase() == 'kg' ||
+                        widget.product.weightMeasurement.toLowerCase() == 'g'
+                    ? () {
+                        final price = calculatePrice(weight, widget.product);
+                        final data = {
+                          'weight': weight,
+                          'price': price.toString(),
+                        };
+                        print(data);
+                        cartProvider.addToCart(
+                            data, widget.product.id, context);
+                      }
+                    : () {
+                        final price = widget.product.offerPrice * quantity;
+                        final data = {
+                          'quantity': quantity.toString(),
+                          'weight': widget.product.weights[0].weight,
+                          'price': price.toString(),
+                        };
+                        print(data);
+                        cartProvider.addToCart(
+                            data, widget.product.id, context);
+                      },
+            child: Text(widget.isCart ? 'Done' : 'Add to Cart'),
           ),
         ],
       ),

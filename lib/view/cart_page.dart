@@ -1,4 +1,7 @@
 import 'package:e_commerce/models/cart_item.dart';
+import 'package:e_commerce/routes/routes_name.dart';
+import 'package:e_commerce/utils/utils.dart';
+import 'package:e_commerce/view/ReUsable/add_to_cart_sheet.dart';
 import 'package:e_commerce/view_model/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,12 +17,10 @@ class CartPage extends StatelessWidget {
         title: const Text('Your Cart'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              // context.read<CartProvider>().clearCart();
-              cartProvider.fetchCart();
-            },
-          ),
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                cartProvider.fetchCart();
+              }),
         ],
       ),
       body: Consumer<CartProvider>(
@@ -37,11 +38,11 @@ class CartPage extends StatelessWidget {
                   itemCount: cart.cartItems.length,
                   itemBuilder: (context, index) {
                     final item = cart.cartItems[index];
-                    return _buildCartItem(context, item);
+                    return _buildCartItem(context, item, cart);
                   },
                 ),
               ),
-              _buildTotalSection(context, cart),
+              _buildCheckOutSection(context, cart),
             ],
           );
         },
@@ -49,11 +50,13 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCartItem(BuildContext context, CartItem cartItem) {
+  Widget _buildCartItem(
+      BuildContext context, CartItem cartItem, CartProvider cartProvider) {
     final baseUrl = 'https://groceryct.pythonanywhere.com';
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
+        enabled: cartItem.product.isAvailable,
         leading: Image.network(
           baseUrl + cartItem.product.imageUrl,
           width: 50,
@@ -66,17 +69,27 @@ class CartPage extends StatelessWidget {
               ? '₹${cartItem.price} x ${cartItem.quantity}'
               : '${cartItem.selectedWeight} x ${cartItem.quantity}= ${cartItem.price}',
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.remove_circle_outline),
-          onPressed: () {
-            // context.read<CartProvider>().removeFromCart( cartItem.product.id);
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+                onPressed: () => _showAddToCartDialog(context, cartItem),
+                icon: Icon(Icons.edit)),
+            IconButton(
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+              onPressed: () =>
+                  cartProvider.removeFromCart(cartItem.id, context),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildTotalSection(BuildContext context, CartProvider cart) {
+  Widget _buildCheckOutSection(BuildContext context, CartProvider cart) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -89,23 +102,86 @@ class CartPage extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Text(
-            'Total:',
-            style: Theme.of(context).textTheme.titleLarge,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total:',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(
+                '₹ ${cart.totalPrice}',
+                style: const TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+            ],
           ),
-          Text(
-            '₹ ${cart.totalPrice}',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.green,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  cart.canCheckOut
+                      ? Navigator.pushNamed(context, RouteName.checkout)
+                      : Utils.flushBar('Remove Stock Out Product', context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      cart.canCheckOut ? Colors.green : Colors.grey[300],
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: const Text(
+                    'Place Order',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  showDeleteAllConformation(BuildContext context, CartProvider cartProvider) {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: Text('Empty Cart'),
+                content: Text('Are you sure to Empty Cart'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('cancel')),
+                  Utils.button(
+                    onPressed: () {},
+                    text: 'Delete',
+                    isLoading: false,
+                  ),
+                ]));
+  }
+
+  void _showAddToCartDialog(BuildContext context, CartItem cartItem) {
+    final product = cartItem.product;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => AddToCartSheet(product: product, isCart: true),
     );
   }
 }

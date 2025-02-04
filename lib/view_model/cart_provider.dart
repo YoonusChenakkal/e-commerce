@@ -1,5 +1,6 @@
 import 'package:e_commerce/models/cart_item.dart';
 import 'package:e_commerce/repository/cart_repository.dart';
+import 'package:e_commerce/services/local_storage.dart';
 import 'package:e_commerce/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +8,27 @@ import 'package:flutter/material.dart';
 class CartProvider extends ChangeNotifier {
   List<CartItem> cartItems = [];
   double totalPrice = 0.0;
+  bool _canCheckOut = true;
+  get canCheckOut => _canCheckOut;
+  set canCheckOut(value) {
+    _canCheckOut = value;
+  }
 
   final _cartRepository = CartRepository();
+  double calculateTotalSavings() {
+    return cartItems.fold(0, (sum, item) {
+      double originalTotal = item.product.price * item.quantity;
+      double discountedTotal = item.price * item.quantity;
+      return sum + (originalTotal - discountedTotal);
+    });
+  }
 
   Future<void> fetchCart() async {
     try {
+      final userId = await LocalStorage.getUser();
+
       // Fetch the cart data from the repository
-      final response = await _cartRepository.fetchCart();
+      final response = await _cartRepository.fetchCart(userId);
 
       // Extract the cart items from the response
       final cartItemsJson = response['cart_items'] as List<dynamic>? ?? [];
@@ -25,6 +40,7 @@ class CartProvider extends ChangeNotifier {
 
       // Update the state with the fetched cart items
       this.cartItems = cartItems;
+      canCheckOut = cartItems.every((item) => item.product.isAvailable);
 
       // Notify listeners to update the UI
       notifyListeners();
@@ -39,7 +55,9 @@ class CartProvider extends ChangeNotifier {
 
   Future addToCart(Map<String, dynamic> body, int productId, context) async {
     try {
-      final response = await _cartRepository.addToCart(body, productId);
+      final userId = await LocalStorage.getUser();
+
+      final response = await _cartRepository.addToCart(body, productId, userId);
       Utils.flushBar(response['detail'] ?? 'Product added to cart', context,
           color: Colors.green);
       fetchCart();
@@ -52,51 +70,37 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future updateCart(
-      Map<String, dynamic> body, int userId, int productId) async {
+      Map<String, dynamic> body, int productId, BuildContext context) async {
     try {
+      final userId = await LocalStorage.getUser();
+
       final response =
           await _cartRepository.updateCart(body, userId, productId);
+      await fetchCart();
+      canCheckOut = cartItems.every((item) => item.product.isAvailable);
+
+      Utils.flushBar('Updated', context, color: Colors.green);
       return response;
     } catch (e) {
       if (kDebugMode) {
         print('Update cart error: $e');
       }
+      Utils.flushBar(e.toString(), context);
     }
   }
 
-  Future removeFromCart(int userId, int cartId) async {
+  Future removeFromCart(int cartId, BuildContext context) async {
     try {
-      final response = await _cartRepository.removeFromCart(userId, cartId);
-      return response;
+      final userId = await LocalStorage.getUser();
+
+      await _cartRepository.removeFromCart(userId, cartId);
+      fetchCart();
+      notifyListeners();
+      Utils.flushBar('Item removed', context);
     } catch (e) {
       if (kDebugMode) {
         print('Remove from cart error: $e');
       }
     }
   }
-
-  // List<CartItem> get items => _items;
-  // double get totalPrice => _items.fold(
-  //     0, (sum, item) => sum + (item.product.offerPrice * item.quantity));
-
-  // void addToCart(Product product, [int quantity = 1]) {
-  //   final index = _items.indexWhere((item) => item.product.id == product.id);
-  //   if (index >= 0) {
-  //     _items[index] =
-  //         _items[index].copyWith(quantity: _items[index].quantity + quantity);
-  //   } else {
-  //     _items.add(CartItem(product: product, quantity: quantity));
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void removeFromCart(int productId) {
-  //   _items.removeWhere((item) => item.product.id == productId);
-  //   notifyListeners();
-  // }
-
-  // void clearCart() {
-  //   _items.clear();
-  //   notifyListeners();
-  // }
 }

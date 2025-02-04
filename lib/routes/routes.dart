@@ -4,6 +4,7 @@ import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/view/bottom_bar.dart';
 import 'package:e_commerce/view/cart_page.dart';
 import 'package:e_commerce/view/categories_page.dart';
+import 'package:e_commerce/view/checkout/checkout_page.dart';
 import 'package:e_commerce/view/home_page.dart';
 import 'package:e_commerce/view/login_page.dart';
 import 'package:e_commerce/view/Profile/profile_page.dart';
@@ -34,6 +35,8 @@ class Routes {
         return MaterialPageRoute(builder: (context) => CategoriesPage());
       case RouteName.profile:
         return MaterialPageRoute(builder: (context) => ProfilePage());
+      case RouteName.checkout:
+        return MaterialPageRoute(builder: (context) => CheckoutPage());
 
       case RouteName.productDetails:
         final args = settings.arguments;
