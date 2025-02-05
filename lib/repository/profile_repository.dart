@@ -9,13 +9,28 @@ class ProfileRepository {
 
   Future<UserModel> fetchUser(userId) async {
     try {
-      final response = await _apiServices.getApi('$fetchUserUrl$userId/');
+      final response = await _apiServices.getApi('$fetchUserUrl$userId');
       return UserModel.fromJson(response);
     } catch (e) {
-      print('$fetchUserUrl$userId/');
+      if (kDebugMode) {
+        print('$fetchUserUrl$userId/');
+      }
 
       if (kDebugMode) {
         print('fetchUser Error: $e');
+      }
+      rethrow;
+    }
+  }
+
+  Future changeAddress(body, userId) async {
+    try {
+      final response =
+          await _apiServices.patchApi('$fetchAddressUrl$userId/', body);
+      return response;
+    } catch (e) {
+      if (kDebugMode) {
+        print('changeAddress: $e');
       }
       rethrow;
     }

@@ -33,9 +33,10 @@ class AuthProvider extends ChangeNotifier {
         context,
       );
       Provider.of<CartProvider>(context, listen: false).fetchCart();
-
-      Utils.flushBar('Logged In Successfully', context, color: Colors.blue);
       Navigator.pushReplacementNamed(context, RouteName.bottomBar);
+
+      await Utils.flushBar('Logged In Successfully', context,
+          color: Colors.blue);
     } catch (error) {
       if (kDebugMode) {
         print('userLogin Error: $error');
@@ -84,10 +85,10 @@ class AuthProvider extends ChangeNotifier {
       if (kDebugMode) {
         print('Verify OTP Value: $response');
       }
-      Utils.flushBar('User Registered,Login Now', context, color: Colors.blue);
-
-      await Future.delayed(Duration(seconds: 3));
       Navigator.pushReplacementNamed(context, RouteName.login);
+
+      await Utils.flushBar('User Registered,Login Now', context,
+          color: Colors.blue);
     } catch (error) {
       if (kDebugMode) {
         print('verifyOtp Error: $error');

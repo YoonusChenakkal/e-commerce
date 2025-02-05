@@ -1,9 +1,9 @@
 import 'package:e_commerce/models/user_model.dart';
 import 'package:e_commerce/repository/profile_repository.dart';
+import 'package:e_commerce/services/local_storage.dart';
 import 'package:e_commerce/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileProvider extends ChangeNotifier {
   UserModel? user;
@@ -11,9 +11,9 @@ class ProfileProvider extends ChangeNotifier {
   final ProfileRepository _profileRepo = ProfileRepository();
 
   fetchUser(BuildContext context) async {
+    isLoading = true;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.get('user_id');
+      final userId = await LocalStorage.getUser();
 
       user = await _profileRepo.fetchUser(userId);
 
@@ -25,6 +25,32 @@ class ProfileProvider extends ChangeNotifier {
     } catch (error) {
       if (kDebugMode) {
         print(' fetchUser Error: $error');
+      }
+      Utils.flushBar(error.toString(), context);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  changeAddress(BuildContext context, body) async {
+    isLoading = true;
+
+    try {
+      final userId = await LocalStorage.getUser();
+
+      await _profileRepo.changeAddress(body, userId);
+      fetchUser(context);
+      Navigator.pop(context);
+
+      await Utils.flushBar('Address updated', context, color: Colors.green);
+
+      if (kDebugMode) {
+        print('changeAddress: $user');
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print(' changeAddress Error: $error');
       }
       Utils.flushBar(error.toString(), context);
     } finally {

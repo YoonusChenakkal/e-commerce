@@ -34,6 +34,7 @@ class NetworkServices extends BaseApiServices {
     return responseJson;
   }
 
+  @override
   Future patchApi(String url, body) async {
     dynamic responseJson;
 

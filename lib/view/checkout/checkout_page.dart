@@ -1,6 +1,8 @@
 import 'package:e_commerce/models/user_model.dart';
 import 'package:e_commerce/utils/utils.dart';
+import 'package:e_commerce/view/ReUsable/expandable_address_card.dart';
 import 'package:e_commerce/view_model/cart_provider.dart';
+import 'package:e_commerce/view_model/checkout_provider.dart';
 import 'package:e_commerce/view_model/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +13,10 @@ class CheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    final user = Provider.of<ProfileProvider>(context).user;
+    final checkoutProvider = Provider.of<CheckoutProvider>(context);
+    final profileProvider = Provider.of<ProfileProvider>(context);
+
+    final user = profileProvider.user!;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Checkout"),
@@ -20,16 +25,22 @@ class CheckoutPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // 🏡 Address Section
-          _buildAddressSection(user!),
+          //  Address Section
+          _buildAddressSection(user),
 
-          // 🛒 Order Summary
+          //  Order Summary
           _buildOrderSummary(cartProvider),
 
-          // 💳 Payment Buttons (COD & Online Payment)
           _buildPaymentButtons(
             onCODSelected: () {
               // Handle Cash on Delivery
+              if (profileProvider.user == null ||
+                  profileProvider.user!.address == null ||
+                  profileProvider.user!.address!.isEmpty) {
+                Utils.flushBar('Add Address', context);
+              } else {
+                checkoutProvider.codCheckout(context);
+              }
             },
             onOnlinePaymentSelected: () {
               // Handle Online Payment
@@ -41,29 +52,9 @@ class CheckoutPage extends StatelessWidget {
   }
 
   Widget _buildAddressSection(UserModel user) {
-    String displayAddress = user.address ?? 'No address Added.';
-
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Delivery Address",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              displayAddress,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-          Utils.button(onPressed: (){}, text: 'Add Address', isLoading:false )
-          ],
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SavedAddressSection(),
     );
   }
 
@@ -78,7 +69,7 @@ class CheckoutPage extends StatelessWidget {
 
     return Expanded(
       child: Card(
-        margin: const EdgeInsets.all(16),
+        margin: EdgeInsets.symmetric(horizontal: 16.0),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -238,12 +229,12 @@ class CheckoutPage extends StatelessWidget {
         children: [
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: onCODSelected,
-              icon: const Icon(Icons.currency_rupee, color: Colors.white),
-              label: const Text("Cash on Delivery"),
+              onPressed: onOnlinePaymentSelected,
+              icon: const Icon(Icons.payment, color: Colors.white),
+              label: const Text("Pay Online"),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),
@@ -251,12 +242,12 @@ class CheckoutPage extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: onOnlinePaymentSelected,
-              icon: const Icon(Icons.payment, color: Colors.white),
-              label: const Text("Pay Online"),
+              onPressed: onCODSelected,
+              icon: Icon(Icons.currency_rupee, color: Colors.white),
+              label: const Text("Cash on Delivery"),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),

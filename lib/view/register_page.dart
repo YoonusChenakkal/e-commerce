@@ -58,78 +58,83 @@ class RegisterPage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              decoration: InputDecoration(label: Text('Name')),
-              controller: tcName,
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('Email')),
-              controller: tcEmail,
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('Phone')),
-              controller: tcPhone,
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('Password')),
-              controller: tcPassword,
-              obscureText: true,
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('Confirm Password')),
-              controller: tcConfirmPassword,
-              obscureText: true,
-            ),
-            SizedBox(height: 30),
-            Utils.button(
-              isLoading: authProvider.isLoading,
-              text: 'Register',
-              onPressed: () async {
-                final data = {
-                  'name': tcName.text,
-                  'email': tcEmail.text,
-                  'mobile_number': tcPhone.text,
-                  'password': tcPassword.text,
-                  'confirm_password': tcConfirmPassword.text,
-                };
-                // Call the registration method
-                if (tcName.text.isEmpty ||
-                    tcEmail.text.isEmpty ||
-                    tcPhone.text.isEmpty ||
-                    tcPassword.text.isEmpty ||
-                    tcConfirmPassword.text.isEmpty) {
-                  Utils.flushBar('Fill all fields', context);
-                } else if (tcPassword.text != tcConfirmPassword.text) {
-                  Utils.flushBar('Password does not match', context);
-                } else {
-                  await authProvider.userRegister(data, context).then((value) {
-                    if (authProvider.isOtpGenarated) {
-                      showOtpDialog(context, email: tcEmail.text);
-                    }
-                  });
-                }
-              },
-            ),
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Already have an account?'),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, RouteName.login);
-                  },
-                  child: Text('Login'),
-                ),
-              ],
-            ),
-          ],
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(label: Text('Name')),
+                controller: tcName,
+              ),
+              TextFormField(
+                decoration: InputDecoration(label: Text('Email')),
+                controller: tcEmail,
+              ),
+              TextFormField(
+                decoration: InputDecoration(label: Text('Phone')),
+                controller: tcPhone,
+              ),
+              TextFormField(
+                decoration: InputDecoration(label: Text('Password')),
+                controller: tcPassword,
+                obscureText: true,
+              ),
+              TextFormField(
+                decoration: InputDecoration(label: Text('Confirm Password')),
+                controller: tcConfirmPassword,
+                obscureText: true,
+              ),
+              SizedBox(height: 30),
+              Utils.button(
+                isLoading: authProvider.isLoading,
+                text: 'Register',
+                onPressed: () async {
+                  final data = {
+                    'name': tcName.text,
+                    'email': tcEmail.text,
+                    'mobile_number': tcPhone.text,
+                    'password': tcPassword.text,
+                    'confirm_password': tcConfirmPassword.text,
+                  };
+                  // Call the registration method
+                  if (tcName.text.isEmpty ||
+                      tcEmail.text.isEmpty ||
+                      tcPhone.text.isEmpty ||
+                      tcPassword.text.isEmpty ||
+                      tcConfirmPassword.text.isEmpty) {
+                    Utils.flushBar('Fill all fields', context);
+                  } else if (tcPassword.text != tcConfirmPassword.text) {
+                    Utils.flushBar('Password does not match', context);
+                  } else {
+                    await authProvider
+                        .userRegister(data, context)
+                        .then((value) {
+                      if (authProvider.isOtpGenarated) {
+                        showOtpDialog(context, email: tcEmail.text);
+                      }
+                    });
+                  }
+                },
+              ),
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Already have an account?'),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, RouteName.login);
+                    },
+                    child: Text('Login'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

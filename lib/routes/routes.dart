@@ -4,6 +4,7 @@ import 'package:e_commerce/routes/routes_name.dart';
 import 'package:e_commerce/view/bottom_bar.dart';
 import 'package:e_commerce/view/cart_page.dart';
 import 'package:e_commerce/view/categories_page.dart';
+import 'package:e_commerce/view/change_password_page.dart';
 import 'package:e_commerce/view/checkout/checkout_page.dart';
 import 'package:e_commerce/view/home_page.dart';
 import 'package:e_commerce/view/login_page.dart';
@@ -22,7 +23,8 @@ class Routes {
 
       case RouteName.register:
         return MaterialPageRoute(builder: (context) => RegisterPage());
-
+      case RouteName.changePassword:
+        return MaterialPageRoute(builder: (context) => ChangePasswordPage());
       case RouteName.home:
         return MaterialPageRoute(builder: (context) => HomePage());
       case RouteName.bottomBar:

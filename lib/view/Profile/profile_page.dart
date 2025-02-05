@@ -3,7 +3,7 @@ import 'package:e_commerce/services/local_storage.dart';
 import 'package:e_commerce/utils/app_style.dart';
 import 'package:e_commerce/utils/utils.dart';
 import 'package:e_commerce/view/Profile/widgets/personal_info_setcion.dart';
-import 'package:e_commerce/view/Profile/widgets/saved_address_section.dart';
+import 'package:e_commerce/view/ReUsable/expandable_address_card.dart';
 import 'package:e_commerce/view/ReUsable/custom_expansion_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,6 @@ class ProfilePage extends StatelessWidget {
             _buildOrderAndCartSection(context),
             PersonalInfoSetcion(),
             SavedAddressSection(),
-            _buildPasswordChangeSection(context),
             _buildLogoutButton(context),
           ],
         ),
@@ -44,52 +43,6 @@ class ProfilePage extends StatelessWidget {
             text: 'Cart',
             icon: Icons.shopping_cart_outlined,
             onpressed: () => Navigator.pushNamed(context, RouteName.cart)),
-      ],
-    );
-  }
-
-  Widget _buildPasswordChangeSection(BuildContext context) {
-    return CustomExpansionTile(
-      leading: const Icon(Icons.password),
-      title: 'Change Password',
-      isExpandable: true, // Always expandable
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Current Password',
-                  prefixIcon: Icon(Icons.lock),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm New Password',
-                  prefixIcon: Icon(Icons.lock_reset),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Utils.button(
-                isLoading: false,
-                text: 'Change Password',
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

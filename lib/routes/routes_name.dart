@@ -2,6 +2,7 @@ class RouteName {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String changePassword = '/changePassword';
   static const String bottomBar = '/bottomBar';
   static const String splashScreen = '/splashScreen';
   static const String cart = '/cart';

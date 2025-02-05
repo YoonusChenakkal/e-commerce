@@ -39,7 +39,8 @@ class UserModel {
       state: json['state'] as String?,
       city: json['city'] as String?,
       roadName: json['road_name'] as String?,
-      pincode: json['pincode'] as String?,
+      // ✅ Convert `pincode` to String if it's an int
+      pincode: json['pincode'] != null ? json['pincode'].toString() : null,
       gender: json['gender'] as String?,
       dob: json['DOB'] as String?,
     );
