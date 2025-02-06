@@ -1,4 +1,3 @@
-
 import 'package:e_commerce/common/models/category_model.dart';
 import 'package:e_commerce/common/routes/routes_name.dart';
 import 'package:e_commerce/modules/ReUsable/product_card.dart';
